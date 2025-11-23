@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>Recursive Lemma CA</title>
+  <title>Recursive Lemma CA (edge)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
@@ -117,7 +117,7 @@
       <canvas id="ca" width="720" height="720"></canvas>
     </div>
     <section id="controls">
-      <h1>Recursive Lemma CA</h1>
+      <h1>Recursive Lemma CA (edge)</h1>
       <div class="buttons">
         <button id="toggle" class="primary">⏸ 停止</button>
         <button id="randomize">🎲 初期化</button>
@@ -150,12 +150,12 @@
       </div>
 
       <small>
-        4値セルオートマトン × ロジスティック写像 × 慣性 × レンマ・ループ × レンマの学習 × 1/f揺らぎ。<br>
-        場とレンマが互いに書き換え合う「再帰レンマ CA」の試作版です。
+        4値セルオートマトン × ロジスティック写像 × 慣性 × レンマ・ループ × レンマの学習 × 1/f揺らぎ × エッジ強調。<br>
+        筋・フィラメントを少し出やすくした「再帰レンマ CA」の派生版です。
       </small>
     </section>
   </main>
-  <footer>Recursive Lemma CA – lemma-driven 4-state logistic CA (with learning & 1/f noise)</footer>
+  <footer>Recursive Lemma CA (edge) – lemma-driven 4-state logistic CA with learning, 1/f noise & edge bias</footer>
   <script src="app.js"></script>
 </body>
 </html>

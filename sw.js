@@ -1,4 +1,4 @@
-const CACHE_NAME = "lemma-ca-recursive-v1";
+const CACHE_NAME = "lemma-ca-recursive-edge-v1";
 const ASSETS = [
   "./",
   "./index.html",
