@@ -1,7 +1,7 @@
 # Recursive Lemma CA（再帰レンマ 4値ロジスティック・スキン + 1/f揺らぎ）
 
 <p align="center">
-  <img src="screenshot.png" width="360" alt="Recursive Lemma CA screenshot" />
+  <img src="screenshot.png" width="360" alt="Recursive Lemma CA screenshot1" />
 </p>
 
 **Recursive Lemma CA** は、4値セルオートマトンに  
