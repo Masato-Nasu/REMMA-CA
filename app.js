@@ -67,6 +67,15 @@
   }
 
   // ---- レンマ辞書：patternId → lemma ----
+  // lemma = {
+  //   phase: number (0..LEMMA_PHASES-1),
+  //   cycle: Int8Array(LEMMA_PHASES)  // 各段の ±1 補正
+  //   rOffset: number                 // ロジスティック r の局所バイアス
+  //   bias: number                    // 明るさバイアス（-1..1）
+  //   useCount: number                // 使用回数
+  //   flatScore: number               // 出力の単調さ指標（小さいほど単調）
+  //   lastV: number                   // 最後に出力した値
+  // }
   const LEMMA_PHASES = 3;
   const lemmaMap = new Map();
   let globalStep = 0;
@@ -89,7 +98,7 @@
       phase: 0,
       cycle: makeRandomCycle(),
       rOffset: (Math.random() * 0.3) - 0.15,   // [-0.15, 0.15]
-      bias: (Math.random() * 2 - 1) * 0.3,     // [-0.3, 0.3]
+      bias: (Math.random() * 2 - 1) * 0.3,     // [-0.3, 0.3] 程度
       useCount: 0,
       flatScore: 1.0,
       lastV: (Math.random() * 4) | 0
@@ -164,25 +173,18 @@
         const i = idx(x, y);
         const oldV = grid[i];
 
-        // --- 3×3 パターンID & 近傍平均 & エッジ強さ ---
+        // --- 3×3 パターンID & 近傍平均 ---
         let patternId = 0;
         let sum = 0;
-        let minV = 3;
-        let maxV = 0;
-
         for (let dy = -1; dy <= 1; dy++) {
           const yy = (y + dy + rows) % rows;
           for (let dx = -1; dx <= 1; dx++) {
             const xx = (x + dx + cols) % cols;
             const v = grid[idx(xx, yy)];
             sum += v;
-            if (v < minV) minV = v;
-            if (v > maxV) maxV = v;
             patternId = patternId * 4 + v; // base-4 符号化
           }
         }
-
-        const edge = maxV - minV; // 0..3 境界の強さ
 
         const lemma = getLemma(patternId);
         lemma.useCount++;
@@ -222,27 +224,14 @@
         else if (vLemmaFloat > 3) vLemmaFloat = 3;
         let vLemma = Math.round(vLemmaFloat);
 
-        // --- エッジに応じた局所慣性 / 更新確率 ---
-        let localInertia = inertia;
-        if (edge === 1) {
-          localInertia = inertia * 0.7;
-        } else if (edge >= 2) {
-          localInertia = inertia * 0.5;
-        }
-
-        let cellUpdateProb = updateProb;
-        if (edge >= 1) {
-          cellUpdateProb = Math.min(1, updateProb + 0.15 * edge);
-        }
-
         // 慣性ブレンド
-        let mixed = (1 - localInertia) * oldV + localInertia * vLemma;
+        let mixed = (1 - inertia) * oldV + inertia * vLemma;
         let vNew = Math.round(mixed);
         if (vNew < 0) vNew = 0;
         else if (vNew > 3) vNew = 3;
 
         // 部分更新
-        if (Math.random() > cellUpdateProb) {
+        if (Math.random() > updateProb) {
           vNew = oldV;
         }
 
@@ -261,6 +250,8 @@
     }
 
     // --- レンマの「学習／変異」 ---
+    // 長く使われていて flatScore が小さい（＝単調）なレンマは、
+    // cycle と bias / rOffset を少しだけ変異させる。
     if (globalStep % 50 === 0) { // 毎 50 ステップごとに少しだけ評価
       const FLAT_THRESHOLD = 0.15;
       const USE_THRESHOLD = 100;

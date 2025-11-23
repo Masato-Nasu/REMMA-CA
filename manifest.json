@@ -1,6 +1,6 @@
 {
-  "name": "Recursive Lemma CA (edge)",
-  "short_name": "LemmaCA-edge",
+  "name": "Recursive Lemma CA",
+  "short_name": "Lemma CA",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
